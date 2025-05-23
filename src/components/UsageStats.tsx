@@ -24,8 +24,10 @@ const UsageStats: React.FC<UsageStatsProps> = ({ language }) => {
     const todayStats = stats[today] || 0;
     setTodayCount(todayStats);
     
-    // Calculate total count across all days - fix the type issue
-    const total = Object.values(stats).reduce((acc: number, curr: unknown) => acc + (Number(curr) || 0), 0);
+    // Calculate total count across all days - fixing the type issue
+    const total = Object.values(stats).reduce((acc: number, curr: unknown) => {
+      return acc + (typeof curr === 'number' ? curr : 0);
+    }, 0);
     setTotalCount(total);
   }, []);
 
