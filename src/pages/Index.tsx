@@ -7,10 +7,23 @@ import { translations } from '@/lib/translations';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UsageStats from '@/components/UsageStats';
 import Footer from '@/components/Footer';
+import TrendingTab from '@/components/TrendingTab';
+import FavoritesTab from '@/components/FavoritesTab';
+import AlertsTab from '@/components/AlertsTab';
 
 const Index = () => {
   const [language, setLanguage] = useState('ar');
   const t = translations[language];
+  const [fromCurrency, setFromCurrency] = useState('bitcoin');
+  const [toCurrency, setToCurrency] = useState('usd');
+  const [amount, setAmount] = useState(1);
+
+  // Handler for selecting a favorite conversion
+  const handleSelectConversion = (from: string, to: string, amt: number) => {
+    setFromCurrency(from);
+    setToCurrency(to);
+    setAmount(amt);
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-10">
@@ -42,40 +55,27 @@ const Index = () => {
             </TabsList>
             
             <TabsContent value="converter" className="mt-6">
-              <CurrencyConverter language={language} />
+              <CurrencyConverter 
+                language={language} 
+                initialFromCurrency={fromCurrency}
+                initialToCurrency={toCurrency}
+                initialAmount={amount}
+              />
             </TabsContent>
             
             <TabsContent value="trending" className="mt-6">
-              <div className="p-6 bg-card rounded-lg shadow-lg">
-                <h3 className="text-xl font-semibold mb-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                  {t.trendingTitle}
-                </h3>
-                <p className="text-muted-foreground" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                  {t.comingSoon}
-                </p>
-              </div>
+              <TrendingTab language={language} />
             </TabsContent>
             
             <TabsContent value="favorites" className="mt-6">
-              <div className="p-6 bg-card rounded-lg shadow-lg">
-                <h3 className="text-xl font-semibold mb-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                  {t.favoritesTitle}
-                </h3>
-                <p className="text-muted-foreground" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                  {t.comingSoon}
-                </p>
-              </div>
+              <FavoritesTab 
+                language={language} 
+                onSelectConversion={handleSelectConversion}
+              />
             </TabsContent>
             
             <TabsContent value="alerts" className="mt-6">
-              <div className="p-6 bg-card rounded-lg shadow-lg">
-                <h3 className="text-xl font-semibold mb-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                  {t.alertsTitle}
-                </h3>
-                <p className="text-muted-foreground" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                  {t.comingSoon}
-                </p>
-              </div>
+              <AlertsTab language={language} />
             </TabsContent>
           </Tabs>
           

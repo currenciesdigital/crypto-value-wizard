@@ -14,20 +14,35 @@ import { useFavorites } from '@/hooks/useFavorites';
 
 interface CurrencyConverterProps {
   language: string;
+  initialFromCurrency?: string;
+  initialToCurrency?: string;
+  initialAmount?: number;
 }
 
-const CurrencyConverter: React.FC<CurrencyConverterProps> = ({ language }) => {
+const CurrencyConverter: React.FC<CurrencyConverterProps> = ({ 
+  language,
+  initialFromCurrency = 'bitcoin',
+  initialToCurrency = 'usd',
+  initialAmount = 1
+}) => {
   const t = translations[language];
   const { addFavorite, isFavorite } = useFavorites();
   
-  const [fromCurrency, setFromCurrency] = useState('bitcoin');
-  const [toCurrency, setToCurrency] = useState('usd');
-  const [amount, setAmount] = useState(1);
+  const [fromCurrency, setFromCurrency] = useState(initialFromCurrency);
+  const [toCurrency, setToCurrency] = useState(initialToCurrency);
+  const [amount, setAmount] = useState(initialAmount);
   const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState('');
   const [priceData, setPriceData] = useState<any>(null);
+
+  // Effect to update from the props when they change
+  useEffect(() => {
+    setFromCurrency(initialFromCurrency);
+    setToCurrency(initialToCurrency);
+    setAmount(initialAmount);
+  }, [initialFromCurrency, initialToCurrency, initialAmount]);
 
   // Update usage statistics
   const updateStats = useCallback(() => {
