@@ -20,9 +20,10 @@ const UsageStats: React.FC<UsageStatsProps> = ({ language }) => {
     const storedStats = localStorage.getItem('cryptoConverterStats');
     const stats = storedStats ? JSON.parse(storedStats) : {};
     
-    // Update today's count
-    const todayStats = stats[today] || 0;
-    setTodayCount(todayStats);
+    // Update today's count with proper type checking
+    const todayStats = stats[today];
+    const todayValue = typeof todayStats === 'number' ? todayStats : 0;
+    setTodayCount(todayValue);
     
     // Calculate total count across all days with proper type checking
     const total = Object.values(stats).reduce((acc: number, curr: unknown) => {
@@ -52,8 +53,9 @@ const UsageStats: React.FC<UsageStatsProps> = ({ language }) => {
     // Save back to localStorage
     localStorage.setItem('cryptoConverterStats', JSON.stringify(stats));
     
-    // Update the state - using proper type assertion
-    setTodayCount(stats[today] as number);
+    // Update the state with proper type checking
+    const todayValue = typeof stats[today] === 'number' ? stats[today] : 0;
+    setTodayCount(todayValue);
     
     // Calculate total count across all days with proper type checking
     const total = Object.values(stats).reduce((acc: number, curr: unknown) => {
