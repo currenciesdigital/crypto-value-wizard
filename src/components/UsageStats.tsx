@@ -9,8 +9,8 @@ interface UsageStatsProps {
 
 const UsageStats: React.FC<UsageStatsProps> = ({ language }) => {
   const t = translations[language];
-  const [todayCount, setTodayCount] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
+  const [todayCount, setTodayCount] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
 
   useEffect(() => {
     // Get today's date in YYYY-MM-DD format
