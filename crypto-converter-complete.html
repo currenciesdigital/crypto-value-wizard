@@ -1,0 +1,1888 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محول العملات الرقمية - Crypto Currency Converter</title>
+  <style>
+    /* Base Styles */
+    :root {
+      --background: #ffffff;
+      --foreground: #020817;
+      --card: #ffffff;
+      --card-foreground: #020817;
+      --border: #e2e8f0;
+      --input: #e2e8f0;
+      --primary: #0f172a;
+      --primary-foreground: #ffffff;
+      --secondary: #f1f5f9;
+      --secondary-foreground: #0f172a;
+      --accent: #f1f5f9;
+      --accent-foreground: #0f172a;
+      --destructive: #ef4444;
+      --destructive-foreground: #f8fafc;
+      --muted: #f1f5f9;
+      --muted-foreground: #64748b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --radius: 0.5rem;
+      --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* RTL support */
+    [dir="rtl"] {
+      text-align: right;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--background);
+      color: var(--foreground);
+      line-height: 1.5;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    /* Layout */
+    .container {
+      width: 100%;
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    /* Card */
+    .card {
+      background-color: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background-color: var(--background);
+      font-size: 1rem;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: -1px;
+    }
+
+    /* Button */
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      text-decoration: none;
+    }
+
+    .button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .button-primary {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .button-primary:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+
+    .button-outline {
+      background-color: transparent;
+      border: 1px solid var(--border);
+      color: var(--foreground);
+    }
+
+    .button-outline:hover:not(:disabled) {
+      background-color: var(--muted);
+    }
+
+    .button-destructive {
+      background-color: var(--destructive);
+      color: var(--destructive-foreground);
+    }
+
+    .button-icon {
+      padding: 0.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+
+    .button-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    /* Language Selector */
+    .language-selector {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+
+    /* Grid & Flexbox */
+    .flex {
+      display: flex;
+    }
+
+    .flex-col {
+      flex-direction: column;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .justify-center {
+      justify-content: center;
+    }
+
+    .justify-between {
+      justify-content: space-between;
+    }
+
+    .justify-end {
+      justify-content: flex-end;
+    }
+
+    .space-x-2 > * + * {
+      margin-left: 0.5rem;
+    }
+
+    [dir="rtl"] .space-x-2 > * + * {
+      margin-left: 0;
+      margin-right: 0.5rem;
+    }
+
+    .space-y-2 > * + * {
+      margin-top: 0.5rem;
+    }
+
+    .space-y-4 > * + * {
+      margin-top: 1rem;
+    }
+
+    .space-y-6 > * + * {
+      margin-top: 1.5rem;
+    }
+
+    .grid {
+      display: grid;
+    }
+
+    .grid-cols-1 {
+      grid-template-columns: 1fr;
+    }
+
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 768px) {
+      .md\:grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .md\:grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .md\:flex-row {
+        flex-direction: row;
+      }
+    }
+
+    .gap-2 {
+      gap: 0.5rem;
+    }
+
+    .gap-4 {
+      gap: 1rem;
+    }
+
+    .p-2 {
+      padding: 0.5rem;
+    }
+
+    .p-3 {
+      padding: 0.75rem;
+    }
+
+    .p-4 {
+      padding: 1rem;
+    }
+
+    .px-8 {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+
+    .py-4 {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .mt-2 {
+      margin-top: 0.5rem;
+    }
+
+    .mt-4 {
+      margin-top: 1rem;
+    }
+
+    .mt-6 {
+      margin-top: 1.5rem;
+    }
+
+    .mt-8 {
+      margin-top: 2rem;
+    }
+
+    .mb-2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .mb-4 {
+      margin-bottom: 1rem;
+    }
+
+    .mb-8 {
+      margin-bottom: 2rem;
+    }
+
+    .ml-2 {
+      margin-left: 0.5rem;
+    }
+
+    .mr-2 {
+      margin-right: 0.5rem;
+    }
+
+    .my-2 {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .rounded-md {
+      border-radius: var(--radius);
+    }
+
+    .rounded-full {
+      border-radius: 9999px;
+    }
+
+    .bg-primary\/10 {
+      background-color: rgba(15, 23, 42, 0.1);
+    }
+
+    .bg-destructive\/10 {
+      background-color: rgba(239, 68, 68, 0.1);
+    }
+
+    .bg-success\/10 {
+      background-color: rgba(16, 185, 129, 0.1);
+    }
+    
+    .text-center {
+      text-align: center;
+    }
+
+    .text-lg {
+      font-size: 1.125rem;
+    }
+
+    .text-sm {
+      font-size: 0.875rem;
+    }
+
+    .text-2xl {
+      font-size: 1.5rem;
+    }
+
+    .text-3xl {
+      font-size: 1.875rem;
+    }
+
+    .text-4xl {
+      font-size: 2.25rem;
+    }
+
+    .font-bold {
+      font-weight: 700;
+    }
+
+    .font-semibold {
+      font-weight: 600;
+    }
+
+    .font-medium {
+      font-weight: 500;
+    }
+
+    .text-muted-foreground {
+      color: var(--muted-foreground);
+    }
+
+    .text-destructive {
+      color: var(--destructive);
+    }
+
+    .text-success {
+      color: var(--success);
+    }
+
+    .text-red-500 {
+      color: #ef4444;
+    }
+
+    .text-green-500 {
+      color: #10b981;
+    }
+
+    .flex-1 {
+      flex: 1;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .tab:hover {
+      background-color: var(--muted);
+    }
+
+    .tab.active {
+      border-bottom-color: var(--primary);
+      background-color: var(--background);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Chart Styles */
+    .chart-container {
+      width: 100%;
+      height: 300px;
+      position: relative;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      max-width: 350px;
+      z-index: 50;
+    }
+
+    .toast {
+      background-color: var(--card);
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      margin-top: 0.5rem;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      animation: slideIn 0.3s ease forwards;
+    }
+
+    .toast.error {
+      border-left-color: var(--destructive);
+    }
+
+    .toast.success {
+      border-left-color: var(--success);
+    }
+
+    .toast-title {
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+    }
+
+    .w-5 {
+      width: 1.25rem;
+    }
+
+    .h-5 {
+      height: 1.25rem;
+    }
+
+    .w-4 {
+      width: 1rem;
+    }
+
+    .h-4 {
+      height: 1rem;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    [dir="rtl"] @keyframes slideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Loading spinner */
+    .spinner {
+      border: 2px solid var(--muted);
+      border-top: 2px solid var(--primary);
+      border-radius: 50%;
+      width: 1rem;
+      height: 1rem;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-right: 0.5rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Radio buttons */
+    .radio-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    input[type="radio"] {
+      width: auto;
+      margin: 0;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0.5rem;
+      }
+      
+      .tabs {
+        font-size: 0.875rem;
+      }
+      
+      .tab {
+        padding: 0.5rem 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="language-selector">
+      <button id="language-toggle" class="button button-outline">English</button>
+    </div>
+    
+    <div class="text-center mb-8">
+      <h1 id="app-title" class="text-4xl font-bold mb-2">محول العملات الرقمية</h1>
+      <p id="app-description" class="text-muted-foreground">حول العملات الرقمية إلى العملات التقليدية بسهولة</p>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="tabs">
+      <div id="converter-tab" class="tab active">المحول</div>
+      <div id="trending-tab" class="tab">الرائج</div>
+      <div id="favorites-tab" class="tab">المفضلة</div>
+      <div id="alerts-tab" class="tab">التنبيهات</div>
+    </div>
+    
+    <!-- Converter Tab -->
+    <div id="converter-content" class="tab-content active">
+      <div id="crypto-converter" class="card">
+        <!-- Conversion Form -->
+        <div class="space-y-6">
+          <div class="flex flex-col md:flex-row gap-4 md:items-center">
+            <div class="flex-1">
+              <label id="amount-label" class="block" for="amount">المبلغ</label>
+              <input
+                id="amount"
+                type="number"
+                min="0"
+                step="0.01"
+                value="1"
+              />
+            </div>
+            
+            <div class="flex-1">
+              <label id="from-label" class="block" for="from-currency">من</label>
+              <select id="from-currency">
+                <option value="bitcoin">Bitcoin (BTC)</option>
+                <option value="ethereum">Ethereum (ETH)</option>
+                <option value="binancecoin">Binance Coin (BNB)</option>
+                <option value="ripple">XRP (XRP)</option>
+                <option value="cardano">Cardano (ADA)</option>
+                <option value="solana">Solana (SOL)</option>
+                <option value="polkadot">Polkadot (DOT)</option>
+                <option value="dogecoin">Dogecoin (DOGE)</option>
+                <option value="litecoin">Litecoin (LTC)</option>
+                <option value="chainlink">Chainlink (LINK)</option>
+              </select>
+            </div>
+            
+            <div class="flex items-center justify-center py-4 md:py-0">
+              <button id="swap-button" class="button button-outline button-icon rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M8 3L4 7l4 4"></path>
+                  <path d="m4 7 9 0a4 4 0 0 1 4 4a4 4 0 0 1-4 4H7"></path>
+                  <path d="m16 21 4-4-4-4"></path>
+                  <path d="M20 17H11a4 4 0 0 1-4-4a4 4 0 0 1 4-4h4"></path>
+                </svg>
+              </button>
+            </div>
+            
+            <div class="flex-1">
+              <label id="to-label" class="block" for="to-currency">إلى</label>
+              <select id="to-currency">
+                <option value="usd">US Dollar (USD)</option>
+                <option value="eur">Euro (EUR)</option>
+                <option value="gbp">British Pound (GBP)</option>
+                <option value="jpy">Japanese Yen (JPY)</option>
+                <option value="aed">UAE Dirham (AED)</option>
+                <option value="sar">Saudi Riyal (SAR)</option>
+                <option value="egp">Egyptian Pound (EGP)</option>
+                <option value="kwd">Kuwaiti Dinar (KWD)</option>
+                <option value="qar">Qatari Riyal (QAR)</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="flex justify-center gap-2">
+            <button id="convert-button" class="button button-primary px-8">تحويل</button>
+            
+            <button id="favorite-button" class="button button-outline button-icon" title="إضافة إلى المفضلة">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Conversion Result -->
+        <div id="result-container" class="mt-4" style="display: none;">
+          <div class="bg-primary/10 p-4 rounded-md text-center">
+            <div id="result-label" class="text-lg font-semibold">النتيجة</div>
+            <div id="result-amount" class="text-3xl font-bold my-2"></div>
+            <div id="last-updated" class="text-sm text-muted-foreground"></div>
+          </div>
+          
+          <div id="price-data" class="flex flex-col gap-4 mt-4" style="display: none;">
+            <div id="price-history" class="card">
+              <div id="price-history-title" class="card-title">تاريخ السعر</div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex flex-col items-center p-4 bg-primary/10 rounded-md">
+                  <span id="price-change-percent" class="text-2xl font-bold"></span>
+                  <span id="price-change-label" class="text-sm text-muted-foreground">التغير خلال 7 أيام (%)</span>
+                </div>
+                <div class="flex flex-col items-center p-4 bg-primary/10 rounded-md">
+                  <span id="price-change-value" class="text-2xl font-bold"></span>
+                  <span id="price-value-label" class="text-sm text-muted-foreground">التغير خلال 7 أيام ($)</span>
+                </div>
+              </div>
+            </div>
+            
+            <div id="price-chart" class="card">
+              <div id="price-chart-title" class="card-title">الرسم البياني للسعر</div>
+              <div class="chart-container">
+                <canvas id="price-chart-canvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Usage Stats -->
+      <div id="usage-stats" class="card mt-8">
+        <div id="usage-stats-title" class="card-title">إحصائيات الاستخدام</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col items-center p-4 bg-primary/10 rounded-md">
+            <span id="today-count" class="text-2xl font-bold">0</span>
+            <span id="today-label" class="text-sm text-muted-foreground">تحويلات اليوم</span>
+          </div>
+          <div class="flex flex-col items-center p-4 bg-primary/10 rounded-md">
+            <span id="total-count" class="text-2xl font-bold">0</span>
+            <span id="total-label" class="text-sm text-muted-foreground">إجمالي التحويلات</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Trending Tab -->
+    <div id="trending-content" class="tab-content">
+      <div class="card">
+        <div class="card-title">العملات الرائجة</div>
+        <div id="trending-loading" class="text-center p-4">
+          <span class="spinner"></span>
+          جاري التحميل...
+        </div>
+        <div id="trending-error" class="text-center text-destructive p-4" style="display: none;">
+          خطأ في تحميل البيانات
+        </div>
+        <div id="trending-list" class="space-y-4" style="display: none;"></div>
+      </div>
+    </div>
+    
+    <!-- Favorites Tab -->
+    <div id="favorites-content" class="tab-content">
+      <div class="card">
+        <div class="card-title">المفضلة</div>
+        <div id="no-favorites" class="text-center text-muted-foreground p-4">لا توجد عملات مفضلة بعد. انقر على أيقونة القلب لإضافة المفضلة.</div>
+        <div id="favorites-list" class="space-y-4"></div>
+      </div>
+    </div>
+    
+    <!-- Alerts Tab -->
+    <div id="alerts-content" class="tab-content">
+      <div class="card">
+        <div class="card-title">تنبيهات الأسعار</div>
+        
+        <!-- Add Alert Form -->
+        <div class="space-y-4 mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">اختر العملة الرقمية</label>
+              <select id="alert-crypto">
+                <option value="bitcoin">Bitcoin (BTC)</option>
+                <option value="ethereum">Ethereum (ETH)</option>
+                <option value="binancecoin">Binance Coin (BNB)</option>
+                <option value="ripple">XRP (XRP)</option>
+                <option value="cardano">Cardano (ADA)</option>
+                <option value="solana">Solana (SOL)</option>
+                <option value="polkadot">Polkadot (DOT)</option>
+                <option value="dogecoin">Dogecoin (DOGE)</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium mb-1">السعر المستهدف (USD)</label>
+              <input
+                id="alert-price"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+          
+          <div class="flex flex-col gap-4">
+            <div class="radio-group">
+              <div class="radio-item">
+                <input
+                  type="radio"
+                  id="alert-above"
+                  name="alert-direction"
+                  value="above"
+                  checked
+                />
+                <label for="alert-above">عندما يكون السعر أعلى من</label>
+              </div>
+              
+              <div class="radio-item">
+                <input
+                  type="radio"
+                  id="alert-below"
+                  name="alert-direction"
+                  value="below"
+                />
+                <label for="alert-below">عندما يكون السعر أقل من</label>
+              </div>
+            </div>
+            
+            <button id="add-alert-button" class="button button-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+              </svg>
+              إضافة تنبيه
+            </button>
+          </div>
+        </div>
+        
+        <div class="border-t pt-4">
+          <h4 class="font-medium mb-4">التنبيهات المحفوظة</h4>
+          <div id="no-alerts" class="text-center text-muted-foreground p-4">لم يتم تعيين تنبيهات للأسعار.</div>
+          <div id="alerts-list" class="space-y-3"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  
+  <script>
+    // Translations
+    const translations = {
+      en: {
+        appTitle: "Crypto Currency Converter",
+        appDescription: "Convert cryptocurrencies to fiat currencies easily",
+        amount: "Amount",
+        from: "From",
+        to: "To",
+        swap: "Swap",
+        convert: "Convert",
+        converting: "Converting...",
+        addToFavorites: "Add to Favorites",
+        removeFromFavorites: "Remove from Favorites",
+        resultLabel: "Result",
+        lastUpdated: "Last updated",
+        priceHistory: "Price History",
+        dayChange: "7-day Change (%)",
+        valueChange: "7-day Change ($)",
+        priceChart: "Price Chart",
+        usageStats: "Usage Statistics",
+        todayConversions: "Today's Conversions",
+        totalConversions: "Total Conversions",
+        converter: "Converter",
+        trending: "Trending",
+        favorites: "Favorites",
+        alerts: "Alerts",
+        noFavorites: "No favorites yet. Click the heart icon to add favorites.",
+        noAlerts: "No price alerts set.",
+        trendingCoins: "Trending Coins",
+        successTitle: "Success",
+        errorTitle: "Error",
+        addedToFavorites: "Added to favorites.",
+        removedFromFavorites: "Removed from favorites.",
+        errorFetchingPrice: "Failed to fetch price data. Please try again later.",
+        errorFetchingTrending: "Error fetching trending coins",
+        selectCrypto: "Select cryptocurrency",
+        selectFiat: "Select fiat currency",
+        loading: "Loading...",
+        score: "Score",
+        targetPrice: "Target Price (USD)",
+        priceAbove: "Price goes above",
+        priceBelow: "Price goes below",
+        addAlert: "Add Alert",
+        yourAlerts: "Your Alerts",
+        alertTriggered: "Price Alert Triggered!",
+        alertAdded: "Price alert added",
+        alertRemoved: "Price alert removed",
+        invalidPrice: "Please enter a valid price",
+        alertAbove: "Alert when above",
+        alertBelow: "Alert when below",
+        use: "Use"
+      },
+      ar: {
+        appTitle: "محول العملات الرقمية",
+        appDescription: "حول العملات الرقمية إلى العملات التقليدية بسهولة",
+        amount: "المبلغ",
+        from: "من",
+        to: "إلى",
+        swap: "تبديل",
+        convert: "تحويل",
+        converting: "جارِ التحويل...",
+        addToFavorites: "إضافة إلى المفضلة",
+        removeFromFavorites: "إزالة من المفضلة",
+        resultLabel: "النتيجة",
+        lastUpdated: "آخر تحديث",
+        priceHistory: "تاريخ السعر",
+        dayChange: "التغير خلال 7 أيام (%)",
+        valueChange: "التغير خلال 7 أيام ($)",
+        priceChart: "الرسم البياني للسعر",
+        usageStats: "إحصائيات الاستخدام",
+        todayConversions: "تحويلات اليوم",
+        totalConversions: "إجمالي التحويلات",
+        converter: "المحول",
+        trending: "الرائج",
+        favorites: "المفضلة",
+        alerts: "التنبيهات",
+        noFavorites: "لا توجد عملات مفضلة بعد. انقر على أيقونة القلب لإضافة المفضلة.",
+        noAlerts: "لم يتم تعيين تنبيهات للأسعار.",
+        trendingCoins: "العملات الرائجة",
+        successTitle: "نجاح",
+        errorTitle: "خطأ",
+        addedToFavorites: "تمت الإضافة إلى المفضلة.",
+        removedFromFavorites: "تمت الإزالة من المفضلة.",
+        errorFetchingPrice: "فشل في جلب بيانات السعر. يرجى المحاولة مرة أخرى لاحقًا.",
+        errorFetchingTrending: "خطأ في جلب العملات الرائجة",
+        selectCrypto: "اختر عملة رقمية",
+        selectFiat: "اختر عملة تقليدية",
+        loading: "جاري التحميل...",
+        score: "النقاط",
+        targetPrice: "السعر المستهدف (USD)",
+        priceAbove: "عندما يكون السعر أعلى من",
+        priceBelow: "عندما يكون السعر أقل من",
+        addAlert: "إضافة تنبيه",
+        yourAlerts: "التنبيهات المحفوظة",
+        alertTriggered: "تم تفعيل تنبيه السعر!",
+        alertAdded: "تم إضافة تنبيه السعر",
+        alertRemoved: "تم حذف تنبيه السعر",
+        invalidPrice: "يرجى إدخال سعر صحيح",
+        alertAbove: "تنبيه عندما يكون أعلى من",
+        alertBelow: "تنبيه عندما يكون أقل من",
+        use: "استخدام"
+      }
+    };
+
+    // Cryptocurrencies with their symbols
+    const cryptocurrencies = [
+      { id: "bitcoin", name: "Bitcoin", symbol: "btc" },
+      { id: "ethereum", name: "Ethereum", symbol: "eth" },
+      { id: "binancecoin", name: "Binance Coin", symbol: "bnb" },
+      { id: "ripple", name: "XRP", symbol: "xrp" },
+      { id: "cardano", name: "Cardano", symbol: "ada" },
+      { id: "solana", name: "Solana", symbol: "sol" },
+      { id: "polkadot", name: "Polkadot", symbol: "dot" },
+      { id: "dogecoin", name: "Dogecoin", symbol: "doge" },
+      { id: "litecoin", name: "Litecoin", symbol: "ltc" },
+      { id: "chainlink", name: "Chainlink", symbol: "link" }
+    ];
+
+    // Fiat currencies with their symbols
+    const fiatCurrencies = [
+      { id: "usd", name: "US Dollar", symbol: "usd" },
+      { id: "eur", name: "Euro", symbol: "eur" },
+      { id: "gbp", name: "British Pound", symbol: "gbp" },
+      { id: "jpy", name: "Japanese Yen", symbol: "jpy" },
+      { id: "aed", name: "UAE Dirham", symbol: "aed" },
+      { id: "sar", name: "Saudi Riyal", symbol: "sar" },
+      { id: "egp", name: "Egyptian Pound", symbol: "egp" },
+      { id: "kwd", name: "Kuwaiti Dinar", symbol: "kwd" },
+      { id: "qar", name: "Qatari Riyal", symbol: "qar" }
+    ];
+
+    // App state
+    let state = {
+      language: "ar",
+      fromCurrency: "bitcoin",
+      toCurrency: "usd",
+      amount: 1,
+      convertedAmount: null,
+      lastUpdated: "",
+      priceData: null,
+      loading: false,
+      error: "",
+      favorites: [],
+      alerts: [],
+      chart: null,
+      currentTab: "converter"
+    };
+
+    // DOM selectors
+    const elements = {
+      languageToggle: document.getElementById("language-toggle"),
+      appTitle: document.getElementById("app-title"),
+      appDescription: document.getElementById("app-description"),
+      amountInput: document.getElementById("amount"),
+      fromCurrencySelect: document.getElementById("from-currency"),
+      toCurrencySelect: document.getElementById("to-currency"),
+      convertButton: document.getElementById("convert-button"),
+      swapButton: document.getElementById("swap-button"),
+      favoriteButton: document.getElementById("favorite-button"),
+      resultContainer: document.getElementById("result-container"),
+      resultAmount: document.getElementById("result-amount"),
+      lastUpdated: document.getElementById("last-updated"),
+      priceData: document.getElementById("price-data"),
+      priceChangePercent: document.getElementById("price-change-percent"),
+      priceChangeValue: document.getElementById("price-change-value"),
+      todayCount: document.getElementById("today-count"),
+      totalCount: document.getElementById("total-count"),
+      // Tabs
+      converterTab: document.getElementById("converter-tab"),
+      trendingTab: document.getElementById("trending-tab"),
+      favoritesTab: document.getElementById("favorites-tab"),
+      alertsTab: document.getElementById("alerts-tab"),
+      // Tab contents
+      converterContent: document.getElementById("converter-content"),
+      trendingContent: document.getElementById("trending-content"),
+      favoritesContent: document.getElementById("favorites-content"),
+      alertsContent: document.getElementById("alerts-content"),
+      // Trending
+      trendingLoading: document.getElementById("trending-loading"),
+      trendingError: document.getElementById("trending-error"),
+      trendingList: document.getElementById("trending-list"),
+      // Favorites
+      favoritesList: document.getElementById("favorites-list"),
+      noFavorites: document.getElementById("no-favorites"),
+      // Alerts
+      alertCrypto: document.getElementById("alert-crypto"),
+      alertPrice: document.getElementById("alert-price"),
+      addAlertButton: document.getElementById("add-alert-button"),
+      alertsList: document.getElementById("alerts-list"),
+      noAlerts: document.getElementById("no-alerts"),
+      // Chart
+      chartCanvas: document.getElementById("price-chart-canvas"),
+    };
+
+    // Update UI text based on selected language
+    function updateUILanguage() {
+      const t = translations[state.language];
+      
+      // Update document direction
+      document.documentElement.setAttribute('dir', state.language === 'ar' ? 'rtl' : 'ltr');
+      
+      // Update header
+      elements.languageToggle.textContent = state.language === 'ar' ? 'English' : 'العربية';
+      elements.appTitle.textContent = t.appTitle;
+      elements.appDescription.textContent = t.appDescription;
+      elements.convertButton.textContent = state.loading ? t.converting : t.convert;
+      
+      // Update labels
+      document.getElementById("amount-label").textContent = t.amount;
+      document.getElementById("from-label").textContent = t.from;
+      document.getElementById("to-label").textContent = t.to;
+      document.getElementById("result-label").textContent = t.resultLabel;
+      document.getElementById("price-history-title").textContent = t.priceHistory;
+      document.getElementById("price-chart-title").textContent = t.priceChart;
+      document.getElementById("usage-stats-title").textContent = t.usageStats;
+      document.getElementById("price-change-label").textContent = t.dayChange;
+      document.getElementById("price-value-label").textContent = t.valueChange;
+      document.getElementById("today-label").textContent = t.todayConversions;
+      document.getElementById("total-label").textContent = t.totalConversions;
+      
+      // Update tabs
+      elements.converterTab.textContent = t.converter;
+      elements.trendingTab.textContent = t.trending;
+      elements.favoritesTab.textContent = t.favorites;
+      elements.alertsTab.textContent = t.alerts;
+      elements.noFavorites.textContent = t.noFavorites;
+      elements.noAlerts.textContent = t.noAlerts;
+      elements.trendingLoading.innerHTML = `<span class="spinner"></span>${t.loading}`;
+      
+      // Update heart button tooltip
+      const isFavorite = isFavoriteConversion(state.fromCurrency, state.toCurrency);
+      elements.favoriteButton.title = isFavorite ? t.removeFromFavorites : t.addToFavorites;
+      
+      // If we have result data, update it for the new language
+      if (state.convertedAmount !== null) {
+        updateConversionResult();
+      }
+      
+      // Update current tab content
+      if (state.currentTab === 'favorites') {
+        renderFavorites();
+      } else if (state.currentTab === 'alerts') {
+        renderAlerts();
+      }
+    }
+
+    // Toggle language between English and Arabic
+    function toggleLanguage() {
+      state.language = state.language === 'en' ? 'ar' : 'en';
+      updateUILanguage();
+    }
+
+    // Format currency amount for display
+    function formatCurrency(amount, currency) {
+      return new Intl.NumberFormat(state.language === 'ar' ? 'ar-SA' : 'en-US', {
+        style: 'currency',
+        currency: currency.toUpperCase(),
+        minimumFractionDigits: amount < 1 ? 6 : 2,
+        maximumFractionDigits: amount < 1 ? 6 : 2
+      }).format(amount);
+    }
+
+    // Show toast notification
+    function showToast(title, message, type = 'success') {
+      const toastContainer = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      toast.innerHTML = `
+        <div class="toast-title">${title}</div>
+        <div>${message}</div>
+      `;
+      
+      toastContainer.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          if (toastContainer.contains(toast)) {
+            toastContainer.removeChild(toast);
+          }
+        }, 300);
+      }, 3000);
+    }
+
+    // Update usage statistics
+    function updateStats() {
+      // Get today's date in YYYY-MM-DD format
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Get the stats from localStorage
+      const storedStats = localStorage.getItem('cryptoConverterStats');
+      let stats = storedStats ? JSON.parse(storedStats) : {};
+      
+      // If no stats for today, initialize to 0
+      if (!stats[today]) {
+        stats[today] = 0;
+      }
+      
+      // Increment the counter
+      stats[today]++;
+      
+      // Save back to localStorage
+      localStorage.setItem('cryptoConverterStats', JSON.stringify(stats));
+      
+      // Update the UI
+      elements.todayCount.textContent = stats[today] || 0;
+      
+      // Calculate total count across all days
+      const total = Object.values(stats).reduce((acc, curr) => {
+        return acc + (typeof curr === 'number' ? curr : 0);
+      }, 0);
+      
+      elements.totalCount.textContent = total;
+    }
+
+    // Load usage stats on startup
+    function loadStats() {
+      // Get today's date in YYYY-MM-DD format
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Get the stats from localStorage
+      const storedStats = localStorage.getItem('cryptoConverterStats');
+      const stats = storedStats ? JSON.parse(storedStats) : {};
+      
+      // Update today's count
+      const todayStats = stats[today] || 0;
+      elements.todayCount.textContent = todayStats;
+      
+      // Calculate total count across all days
+      const total = Object.values(stats).reduce((acc, curr) => {
+        return acc + (typeof curr === 'number' ? curr : 0);
+      }, 0);
+      
+      elements.totalCount.textContent = total;
+    }
+
+    // Fetch cryptocurrency price
+    async function fetchPrice() {
+      if (!state.fromCurrency || !state.toCurrency) {
+        return;
+      }
+
+      state.loading = true;
+      state.error = '';
+      const t = translations[state.language];
+      elements.convertButton.textContent = t.converting;
+
+      try {
+        const response = await fetch(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${state.fromCurrency}&vs_currencies=${state.toCurrency}&include_24hr_change=true&include_last_updated_at=true`
+        );
+
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (!data[state.fromCurrency] || !data[state.fromCurrency][state.toCurrency]) {
+          throw new Error(`Price data not available for ${state.fromCurrency} to ${state.toCurrency}`);
+        }
+
+        const price = data[state.fromCurrency][state.toCurrency];
+        const lastUpdateTime = new Date(data[state.fromCurrency].last_updated_at * 1000);
+
+        state.convertedAmount = state.amount * price;
+        state.lastUpdated = lastUpdateTime.toLocaleString(
+          state.language === 'ar' ? 'ar-SA' : 'en-US'
+        );
+
+        // Fetch historical data for chart
+        await fetchHistoricalData();
+        
+        // Update usage stats
+        updateStats();
+        
+        // Update the UI
+        updateConversionResult();
+        
+        // Save current conversion to localStorage
+        localStorage.setItem(
+          'lastConversion',
+          JSON.stringify({
+            fromCurrency: state.fromCurrency,
+            toCurrency: state.toCurrency,
+            amount: state.amount
+          })
+        );
+      } catch (err) {
+        console.error('Error fetching price:', err);
+        state.error = t.errorFetchingPrice;
+        showToast(t.errorTitle, t.errorFetchingPrice, 'error');
+        state.convertedAmount = null;
+      } finally {
+        state.loading = false;
+        elements.convertButton.textContent = t.convert;
+      }
+    }
+
+    // Fetch historical price data
+    async function fetchHistoricalData() {
+      try {
+        const response = await fetch(
+          `https://api.coingecko.com/api/v3/coins/${state.fromCurrency}/market_chart?vs_currency=${state.toCurrency}&days=7&interval=daily`
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch historical data');
+        }
+
+        const data = await response.json();
+        state.priceData = data;
+        
+        // Display the price data section
+        elements.priceData.style.display = 'flex';
+        
+        // Calculate 7-day change
+        if (data.prices && data.prices.length >= 2) {
+          const oldPrice = data.prices[0][1];
+          const newPrice = data.prices[data.prices.length - 1][1];
+          const changePercent = ((newPrice - oldPrice) / oldPrice) * 100;
+          const changeValue = newPrice - oldPrice;
+          
+          elements.priceChangePercent.textContent = `${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`;
+          elements.priceChangePercent.style.color = changePercent >= 0 ? '#10b981' : '#ef4444';
+          
+          elements.priceChangeValue.textContent = formatCurrency(changeValue, state.toCurrency);
+          elements.priceChangeValue.style.color = changeValue >= 0 ? '#10b981' : '#ef4444';
+        }
+        
+        // Create chart
+        createChart(data);
+      } catch (err) {
+        console.error('Error fetching historical data:', err);
+        elements.priceData.style.display = 'none';
+        state.priceData = null;
+      }
+    }
+
+    // Update the conversion result UI
+    function updateConversionResult() {
+      const t = translations[state.language];
+      
+      if (state.error) {
+        elements.resultContainer.innerHTML = `
+          <div class="bg-destructive/10 text-destructive p-3 rounded-md text-center">
+            ${state.error}
+          </div>
+        `;
+        elements.resultContainer.style.display = 'block';
+        return;
+      }
+
+      if (state.convertedAmount === null) {
+        elements.resultContainer.style.display = 'none';
+        return;
+      }
+
+      elements.resultContainer.style.display = 'block';
+      elements.resultAmount.textContent = formatCurrency(state.convertedAmount, state.toCurrency);
+      elements.lastUpdated.textContent = `${t.lastUpdated}: ${state.lastUpdated}`;
+    }
+
+    // Create price chart
+    function createChart(data) {
+      if (!data || !data.prices || data.prices.length === 0) return;
+      
+      // Destroy existing chart if it exists
+      if (state.chart) {
+        state.chart.destroy();
+      }
+      
+      // Format dates for chart
+      const labels = data.prices.map(price => {
+        const date = new Date(price[0]);
+        return date.toLocaleDateString(state.language === 'ar' ? 'ar-SA' : 'en-US', {
+          month: 'short',
+          day: 'numeric'
+        });
+      });
+      
+      const priceValues = data.prices.map(price => price[1]);
+      
+      // Create a gradient for the chart area
+      const ctx = elements.chartCanvas.getContext('2d');
+      const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, 'rgba(15, 23, 42, 0.3)');
+      gradient.addColorStop(1, 'rgba(15, 23, 42, 0.0)');
+      
+      // Create the chart
+      state.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: `${state.fromCurrency.toUpperCase()} Price`,
+            data: priceValues,
+            borderColor: 'rgb(15, 23, 42)',
+            backgroundColor: gradient,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 3,
+            pointBackgroundColor: 'rgb(15, 23, 42)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return formatCurrency(context.raw, state.toCurrency);
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                display: false
+              }
+            },
+            y: {
+              position: state.language === 'ar' ? 'right' : 'left',
+              grid: {
+                color: 'rgba(15, 23, 42, 0.1)'
+              },
+              ticks: {
+                callback: function(value) {
+                  return formatCurrency(value, state.toCurrency);
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Load favorites from localStorage
+    function loadFavorites() {
+      const storedFavorites = localStorage.getItem('cryptoFavorites');
+      if (storedFavorites) {
+        try {
+          const parsedFavorites = JSON.parse(storedFavorites);
+          state.favorites = Array.isArray(parsedFavorites) ? parsedFavorites : [];
+        } catch (error) {
+          console.error('Error parsing favorites from localStorage', error);
+          state.favorites = [];
+        }
+      }
+      updateFavoriteButtonState();
+      renderFavorites();
+    }
+
+    // Save favorites to localStorage
+    function saveFavorites() {
+      localStorage.setItem('cryptoFavorites', JSON.stringify(state.favorites));
+      renderFavorites();
+    }
+
+    // Check if conversion is in favorites
+    function isFavoriteConversion(fromCurrency, toCurrency) {
+      return state.favorites.some(
+        item => 
+          item.fromCurrency === fromCurrency && 
+          item.toCurrency === toCurrency
+      );
+    }
+
+    // Toggle favorite status
+    function toggleFavorite() {
+      const t = translations[state.language];
+      const isFavorite = isFavoriteConversion(state.fromCurrency, state.toCurrency);
+      
+      if (isFavorite) {
+        state.favorites = state.favorites.filter(
+          item => !(item.fromCurrency === state.fromCurrency && item.toCurrency === state.toCurrency)
+        );
+        showToast(t.successTitle, t.removedFromFavorites);
+      } else {
+        state.favorites.push({
+          fromCurrency: state.fromCurrency,
+          toCurrency: state.toCurrency,
+          amount: state.amount
+        });
+        showToast(t.successTitle, t.addedToFavorites);
+      }
+      
+      saveFavorites();
+      updateFavoriteButtonState();
+    }
+
+    // Update favorite button appearance
+    function updateFavoriteButtonState() {
+      const isFavorite = isFavoriteConversion(state.fromCurrency, state.toCurrency);
+      const heartIcon = elements.favoriteButton.querySelector('svg');
+      
+      if (isFavorite) {
+        heartIcon.setAttribute('fill', 'currentColor');
+        elements.favoriteButton.classList.add('text-red-500');
+      } else {
+        heartIcon.setAttribute('fill', 'none');
+        elements.favoriteButton.classList.remove('text-red-500');
+      }
+      
+      const t = translations[state.language];
+      elements.favoriteButton.title = t[isFavorite ? 'removeFromFavorites' : 'addToFavorites'];
+    }
+
+    // Render favorites list
+    function renderFavorites() {
+      const t = translations[state.language];
+      
+      if (state.favorites.length === 0) {
+        elements.noFavorites.style.display = 'block';
+        elements.favoritesList.innerHTML = '';
+        return;
+      }
+      
+      elements.noFavorites.style.display = 'none';
+      elements.favoritesList.innerHTML = '';
+      
+      state.favorites.forEach((favorite, index) => {
+        const fromCurrency = cryptocurrencies.find(c => c.id === favorite.fromCurrency);
+        const toCurrency = fiatCurrencies.find(c => c.id === favorite.toCurrency);
+        
+        if (!fromCurrency || !toCurrency) return;
+        
+        const favoriteItem = document.createElement('div');
+        favoriteItem.className = 'flex justify-between items-center p-4 border rounded-md';
+        favoriteItem.innerHTML = `
+          <div>
+            <div class="font-semibold">${favorite.amount} ${fromCurrency.name} (${fromCurrency.symbol.toUpperCase()})</div>
+            <div class="text-sm text-muted-foreground">${t.to} ${toCurrency.name} (${toCurrency.symbol.toUpperCase()})</div>
+          </div>
+          <div class="flex space-x-2">
+            <button class="button button-outline button-sm load-favorite" data-index="${index}">
+              ${t.use}
+            </button>
+            <button class="button button-destructive button-sm remove-favorite" data-index="${index}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                <line x1="10" x2="10" y1="11" y2="17"></line>
+                <line x1="14" x2="14" y1="11" y2="17"></line>
+              </svg>
+            </button>
+          </div>
+        `;
+        
+        elements.favoritesList.appendChild(favoriteItem);
+      });
+      
+      // Add event listeners to the buttons
+      document.querySelectorAll('.load-favorite').forEach(button => {
+        button.addEventListener('click', function() {
+          const index = parseInt(this.dataset.index, 10);
+          const favorite = state.favorites[index];
+          
+          if (favorite) {
+            state.fromCurrency = favorite.fromCurrency;
+            state.toCurrency = favorite.toCurrency;
+            state.amount = favorite.amount;
+            
+            // Update the form
+            elements.fromCurrencySelect.value = favorite.fromCurrency;
+            elements.toCurrencySelect.value = favorite.toCurrency;
+            elements.amountInput.value = favorite.amount;
+            
+            // Update favorite button
+            updateFavoriteButtonState();
+            
+            // Switch to converter tab
+            switchTab('converter');
+            
+            // Perform the conversion
+            fetchPrice();
+          }
+        });
+      });
+      
+      document.querySelectorAll('.remove-favorite').forEach(button => {
+        button.addEventListener('click', function() {
+          const index = parseInt(this.dataset.index, 10);
+          
+          if (index >= 0 && index < state.favorites.length) {
+            state.favorites.splice(index, 1);
+            saveFavorites();
+            
+            // Update UI if current conversion was removed
+            updateFavoriteButtonState();
+            
+            const t = translations[state.language];
+            showToast(t.successTitle, t.removedFromFavorites);
+          }
+        });
+      });
+    }
+
+    // Fetch trending cryptocurrencies
+    async function fetchTrending() {
+      const t = translations[state.language];
+      elements.trendingLoading.style.display = 'block';
+      elements.trendingError.style.display = 'none';
+      elements.trendingList.style.display = 'none';
+      
+      try {
+        const response = await fetch('https://api.coingecko.com/api/v3/search/trending');
+        
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.coins) {
+          throw new Error('No trending data available');
+        }
+        
+        elements.trendingLoading.style.display = 'none';
+        elements.trendingList.style.display = 'block';
+        renderTrending(data.coins.slice(0, 6));
+      } catch (err) {
+        console.error('Error fetching trending coins:', err);
+        elements.trendingLoading.style.display = 'none';
+        elements.trendingError.style.display = 'block';
+        elements.trendingError.textContent = t.errorFetchingTrending;
+      }
+    }
+
+    // Render trending cryptocurrencies
+    function renderTrending(trendingCoins) {
+      const t = translations[state.language];
+      elements.trendingList.innerHTML = '';
+      
+      trendingCoins.forEach(coin => {
+        const item = coin.item;
+        const trendingItem = document.createElement('div');
+        trendingItem.className = 'flex justify-between items-center p-4 border rounded-md';
+        trendingItem.innerHTML = `
+          <div class="flex items-center gap-2">
+            <img src="${item.small}" alt="${item.name}" class="w-8 h-8 rounded-full" />
+            <div>
+              <div class="font-semibold">${item.name} (${item.symbol})</div>
+              <div class="text-sm text-muted-foreground">
+                ${t.score}: ${item.score} | Rank: ${item.market_cap_rank || 'N/A'}
+              </div>
+            </div>
+          </div>
+          <button class="button button-primary button-sm use-trending" data-id="${item.id}">
+            ${t.use}
+          </button>
+        `;
+        
+        elements.trendingList.appendChild(trendingItem);
+      });
+      
+      // Add event listeners
+      document.querySelectorAll('.use-trending').forEach(button => {
+        button.addEventListener('click', function() {
+          const coinId = this.dataset.id;
+          
+          // Check if the coin is in our list
+          const foundCoin = cryptocurrencies.find(c => c.id === coinId);
+          if (foundCoin) {
+            state.fromCurrency = coinId;
+            elements.fromCurrencySelect.value = coinId;
+          }
+          
+          // Switch to the converter tab
+          switchTab('converter');
+          
+          // Update favorite button state
+          updateFavoriteButtonState();
+          
+          // Perform the conversion
+          fetchPrice();
+        });
+      });
+    }
+
+    // Load alerts from localStorage
+    function loadAlerts() {
+      const storedAlerts = localStorage.getItem('cryptoPriceAlerts');
+      if (storedAlerts) {
+        try {
+          state.alerts = JSON.parse(storedAlerts);
+        } catch (error) {
+          console.error('Error parsing alerts from localStorage', error);
+          state.alerts = [];
+        }
+      }
+      renderAlerts();
+    }
+
+    // Save alerts to localStorage
+    function saveAlerts() {
+      localStorage.setItem('cryptoPriceAlerts', JSON.stringify(state.alerts));
+      renderAlerts();
+    }
+
+    // Add new price alert
+    function addAlert() {
+      const t = translations[state.language];
+      const cryptoCurrency = elements.alertCrypto.value;
+      const targetPrice = parseFloat(elements.alertPrice.value);
+      const direction = document.querySelector('input[name="alert-direction"]:checked').value;
+      
+      if (!targetPrice || isNaN(targetPrice) || targetPrice <= 0) {
+        showToast(t.errorTitle, t.invalidPrice, 'error');
+        return;
+      }
+      
+      const newAlert = {
+        id: Date.now().toString(),
+        cryptoCurrency,
+        targetPrice,
+        direction,
+        createdAt: Date.now(),
+        triggered: false
+      };
+      
+      state.alerts.push(newAlert);
+      saveAlerts();
+      
+      // Clear form
+      elements.alertPrice.value = '';
+      
+      showToast(t.successTitle, t.alertAdded);
+    }
+
+    // Remove alert
+    function removeAlert(id) {
+      const t = translations[state.language];
+      state.alerts = state.alerts.filter(alert => alert.id !== id);
+      saveAlerts();
+      showToast(t.successTitle, t.alertRemoved);
+    }
+
+    // Render alerts list
+    function renderAlerts() {
+      const t = translations[state.language];
+      
+      if (state.alerts.length === 0) {
+        elements.noAlerts.style.display = 'block';
+        elements.alertsList.innerHTML = '';
+        return;
+      }
+      
+      elements.noAlerts.style.display = 'none';
+      elements.alertsList.innerHTML = '';
+      
+      state.alerts.forEach(alert => {
+        const alertItem = document.createElement('div');
+        alertItem.className = `flex justify-between items-center p-3 border rounded-md ${alert.triggered ? 'bg-success/10' : ''}`;
+        
+        const crypto = cryptocurrencies.find(c => c.id === alert.cryptoCurrency);
+        const cryptoName = crypto ? crypto.name : alert.cryptoCurrency;
+        
+        alertItem.innerHTML = `
+          <div>
+            <div class="font-medium">${cryptoName.toUpperCase()}</div>
+            <div class="text-sm text-muted-foreground">
+              ${alert.direction === 'above' ? t.alertAbove : t.alertBelow} $${alert.targetPrice}
+            </div>
+            ${alert.triggered ? `<div class="text-sm text-success font-semibold mt-1">${t.alertTriggered}</div>` : ''}
+          </div>
+          <button class="button button-destructive button-sm remove-alert" data-id="${alert.id}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+              <line x1="10" x2="10" y1="11" y2="17"></line>
+              <line x1="14" x2="14" y1="11" y2="17"></line>
+            </svg>
+          </button>
+        `;
+        
+        elements.alertsList.appendChild(alertItem);
+      });
+      
+      // Add event listeners
+      document.querySelectorAll('.remove-alert').forEach(button => {
+        button.addEventListener('click', function() {
+          const id = this.dataset.id;
+          removeAlert(id);
+        });
+      });
+    }
+
+    // Check alerts periodically
+    async function checkAlerts() {
+      if (state.alerts.length === 0) return;
+      
+      try {
+        const cryptoIds = [...new Set(state.alerts.map(alert => alert.cryptoCurrency))].join(',');
+        const response = await fetch(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${cryptoIds}&vs_currencies=usd`
+        );
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch prices');
+        }
+        
+        const prices = await response.json();
+        const t = translations[state.language];
+        let alertTriggered = false;
+        
+        state.alerts = state.alerts.map(alert => {
+          if (alert.triggered) return alert;
+          
+          const currentPrice = prices[alert.cryptoCurrency]?.usd;
+          if (!currentPrice) return alert;
+          
+          if (
+            (alert.direction === 'above' && currentPrice >= alert.targetPrice) ||
+            (alert.direction === 'below' && currentPrice <= alert.targetPrice)
+          ) {
+            alertTriggered = true;
+            showToast(
+              t.alertTriggered,
+              `${alert.cryptoCurrency.toUpperCase()} price is now $${currentPrice}`,
+              'success'
+            );
+            return { ...alert, triggered: true };
+          }
+          
+          return alert;
+        });
+        
+        if (alertTriggered) {
+          saveAlerts();
+        }
+      } catch (error) {
+        console.error('Error checking alerts:', error);
+      }
+    }
+
+    // Switch between tabs
+    function switchTab(tabName) {
+      // Remove active class from all tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Hide all tab content
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      // Set active tab and show content
+      let tabElement, contentElement;
+      
+      switch(tabName) {
+        case 'converter':
+          tabElement = elements.converterTab;
+          contentElement = elements.converterContent;
+          break;
+        case 'trending':
+          tabElement = elements.trendingTab;
+          contentElement = elements.trendingContent;
+          fetchTrending();
+          break;
+        case 'favorites':
+          tabElement = elements.favoritesTab;
+          contentElement = elements.favoritesContent;
+          renderFavorites();
+          break;
+        case 'alerts':
+          tabElement = elements.alertsTab;
+          contentElement = elements.alertsContent;
+          renderAlerts();
+          break;
+      }
+      
+      if (tabElement && contentElement) {
+        tabElement.classList.add('active');
+        contentElement.classList.add('active');
+        state.currentTab = tabName;
+      }
+    }
+
+    // Handle form submission (convert button click)
+    function handleConvert() {
+      // Get values from form
+      state.amount = parseFloat(elements.amountInput.value) || 0;
+      state.fromCurrency = elements.fromCurrencySelect.value;
+      state.toCurrency = elements.toCurrencySelect.value;
+      
+      // Perform conversion
+      fetchPrice();
+    }
+
+    // Handle currency swap
+    function handleSwap() {
+      // Swap currencies
+      const tempCurrency = state.fromCurrency;
+      state.fromCurrency = state.toCurrency;
+      state.toCurrency = tempCurrency;
+      
+      // Update select elements
+      elements.fromCurrencySelect.value = state.fromCurrency;
+      elements.toCurrencySelect.value = state.toCurrency;
+      
+      // Update favorite button
+      updateFavoriteButtonState();
+      
+      // Perform conversion with swapped currencies
+      fetchPrice();
+    }
+
+    // Initialize the app
+    function init() {
+      // Load saved conversion from localStorage
+      const savedConversion = localStorage.getItem('lastConversion');
+      if (savedConversion) {
+        try {
+          const { fromCurrency, toCurrency, amount } = JSON.parse(savedConversion);
+          state.fromCurrency = fromCurrency || 'bitcoin';
+          state.toCurrency = toCurrency || 'usd';
+          state.amount = amount || 1;
+          
+          // Update UI
+          elements.fromCurrencySelect.value = state.fromCurrency;
+          elements.toCurrencySelect.value = state.toCurrency;
+          elements.amountInput.value = state.amount;
+        } catch (error) {
+          console.error('Error parsing saved conversion', error);
+        }
+      }
+      
+      // Set up event listeners
+      elements.languageToggle.addEventListener('click', toggleLanguage);
+      elements.convertButton.addEventListener('click', handleConvert);
+      elements.swapButton.addEventListener('click', handleSwap);
+      elements.favoriteButton.addEventListener('click', toggleFavorite);
+      elements.addAlertButton.addEventListener('click', addAlert);
+      
+      // Tab event listeners
+      elements.converterTab.addEventListener('click', () => switchTab('converter'));
+      elements.trendingTab.addEventListener('click', () => switchTab('trending'));
+      elements.favoritesTab.addEventListener('click', () => switchTab('favorites'));
+      elements.alertsTab.addEventListener('click', () => switchTab('alerts'));
+      
+      // Input change listeners
+      elements.amountInput.addEventListener('input', () => {
+        state.amount = parseFloat(elements.amountInput.value) || 0;
+      });
+      
+      elements.fromCurrencySelect.addEventListener('change', () => {
+        state.fromCurrency = elements.fromCurrencySelect.value;
+        updateFavoriteButtonState();
+      });
+      
+      elements.toCurrencySelect.addEventListener('change', () => {
+        state.toCurrency = elements.toCurrencySelect.value;
+        updateFavoriteButtonState();
+      });
+      
+      // Load data
+      loadFavorites();
+      loadAlerts();
+      loadStats();
+      
+      // Set initial language
+      updateUILanguage();
+      
+      // Do initial conversion
+      fetchPrice();
+      
+      // Check alerts every minute
+      setInterval(checkAlerts, 60000);
+    }
+
+    // Start the app
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
