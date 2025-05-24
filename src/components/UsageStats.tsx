@@ -52,8 +52,8 @@ const UsageStats: React.FC<UsageStatsProps> = ({ language }) => {
     // Save back to localStorage
     localStorage.setItem('cryptoConverterStats', JSON.stringify(stats));
     
-    // Update the state
-    setTodayCount(stats[today]);
+    // Update the state - using proper type assertion
+    setTodayCount(stats[today] as number);
     
     // Calculate total count across all days with proper type checking
     const total = Object.values(stats).reduce((acc: number, curr: unknown) => {

@@ -1,0 +1,834 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محول العملات المشفرة</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: white;
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            margin-bottom: 20px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .swap-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+        }
+
+        .swap-btn:hover {
+            background: #0056b3;
+            transform: rotate(180deg);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            direction: rtl;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .result {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .result-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .result-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .trending-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .trending-info h4 {
+            margin: 0;
+            color: #333;
+        }
+
+        .trending-info p {
+            margin: 5px 0 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .price-change {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .price-up {
+            color: #28a745;
+            background: #d4edda;
+        }
+
+        .price-down {
+            color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .favorite-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .alert-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .alert-triggered {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .heart-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.3s ease;
+        }
+
+        .heart-btn.active {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>محول العملات المشفرة</h1>
+            <p>أداة شاملة لتحويل العملات المشفرة مع تتبع الأسعار والتنبيهات</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('converter')">المحول</button>
+            <button class="tab" onclick="showTab('trending')">الرائجة</button>
+            <button class="tab" onclick="showTab('favorites')">المفضلة</button>
+            <button class="tab" onclick="showTab('alerts')">تنبيهات الأسعار</button>
+        </div>
+
+        <!-- المحول -->
+        <div id="converter" class="tab-content active">
+            <div class="form-row">
+                <div class="form-col">
+                    <label for="amount">المبلغ</label>
+                    <input type="number" id="amount" value="1" min="0" step="0.01">
+                </div>
+                <div class="form-col">
+                    <label for="fromCurrency">من</label>
+                    <select id="fromCurrency">
+                        <option value="bitcoin">Bitcoin (BTC)</option>
+                        <option value="ethereum">Ethereum (ETH)</option>
+                        <option value="tether">Tether (USDT)</option>
+                        <option value="ripple">XRP (XRP)</option>
+                        <option value="cardano">Cardano (ADA)</option>
+                        <option value="solana">Solana (SOL)</option>
+                    </select>
+                </div>
+                <button class="swap-btn" onclick="swapCurrencies()" title="تبديل العملات">⇄</button>
+                <div class="form-col">
+                    <label for="toCurrency">إلى</label>
+                    <select id="toCurrency">
+                        <option value="usd">US Dollar (USD)</option>
+                        <option value="eur">Euro (EUR)</option>
+                        <option value="gbp">British Pound (GBP)</option>
+                        <option value="aed">UAE Dirham (AED)</option>
+                        <option value="sar">Saudi Riyal (SAR)</option>
+                        <option value="egp">Egyptian Pound (EGP)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onclick="convertCurrency()" id="convertBtn">تحويل</button>
+                <button class="heart-btn" onclick="toggleFavorite()" id="favoriteBtn" title="إضافة للمفضلة">♡</button>
+            </div>
+
+            <div id="result" style="display: none;">
+                <div class="result">
+                    <div>النتيجة</div>
+                    <div class="result-amount" id="resultAmount">0</div>
+                    <div class="result-info" id="resultInfo">آخر تحديث: الآن</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الرائجة -->
+        <div id="trending" class="tab-content">
+            <h3 style="margin-bottom: 20px;">العملات الرائجة</h3>
+            <div id="trendingList">
+                <div class="loading">جاري التحميل...</div>
+            </div>
+        </div>
+
+        <!-- المفضلة -->
+        <div id="favorites" class="tab-content">
+            <h3 style="margin-bottom: 20px;">التحويلات المفضلة</h3>
+            <div id="favoritesList">
+                <div class="empty-state">لا توجد تحويلات مفضلة حتى الآن</div>
+            </div>
+        </div>
+
+        <!-- تنبيهات الأسعار -->
+        <div id="alerts" class="tab-content">
+            <h3 style="margin-bottom: 20px;">تنبيهات الأسعار</h3>
+            
+            <div class="card">
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="alertCrypto">العملة المشفرة</label>
+                        <select id="alertCrypto">
+                            <option value="bitcoin">Bitcoin (BTC)</option>
+                            <option value="ethereum">Ethereum (ETH)</option>
+                            <option value="tether">Tether (USDT)</option>
+                            <option value="ripple">XRP (XRP)</option>
+                            <option value="cardano">Cardano (ADA)</option>
+                            <option value="solana">Solana (SOL)</option>
+                        </select>
+                    </div>
+                    <div class="form-col">
+                        <label for="targetPrice">السعر المستهدف (USD)</label>
+                        <input type="number" id="targetPrice" min="0" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="above" name="direction" value="above" checked>
+                        <label for="above">أعلى من</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="below" name="direction" value="below">
+                        <label for="below">أقل من</label>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="addAlert()">إضافة تنبيه</button>
+            </div>
+
+            <h4 style="margin: 20px 0 10px 0;">تنبيهاتك</h4>
+            <div id="alertsList">
+                <div class="empty-state">لا توجد تنبيهات مُعدّة</div>
+            </div>
+        </div>
+
+        <!-- إحصائيات الاستخدام -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="todayCount">0</div>
+                <div class="stat-label">تحويلات اليوم</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalCount">0</div>
+                <div class="stat-label">إجمالي التحويلات</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let favorites = JSON.parse(localStorage.getItem('cryptoFavorites') || '[]');
+        let alerts = JSON.parse(localStorage.getItem('cryptoAlerts') || '[]');
+
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Load data for specific tabs
+            if (tabName === 'trending') {
+                loadTrendingCoins();
+            } else if (tabName === 'favorites') {
+                displayFavorites();
+            } else if (tabName === 'alerts') {
+                displayAlerts();
+            }
+        }
+
+        // Currency conversion
+        async function convertCurrency() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+            const convertBtn = document.getElementById('convertBtn');
+            const resultDiv = document.getElementById('result');
+
+            if (amount <= 0) {
+                alert('يرجى إدخال مبلغ صحيح');
+                return;
+            }
+
+            convertBtn.textContent = 'جاري التحويل...';
+            convertBtn.disabled = true;
+
+            try {
+                const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${fromCurrency}&vs_currencies=${toCurrency}`);
+                const data = await response.json();
+
+                if (data[fromCurrency] && data[fromCurrency][toCurrency]) {
+                    const rate = data[fromCurrency][toCurrency];
+                    const result = amount * rate;
+
+                    document.getElementById('resultAmount').textContent = 
+                        new Intl.NumberFormat('ar-SA', {
+                            style: 'currency',
+                            currency: toCurrency.toUpperCase(),
+                            minimumFractionDigits: result < 1 ? 6 : 2,
+                            maximumFractionDigits: result < 1 ? 6 : 2
+                        }).format(result);
+
+                    document.getElementById('resultInfo').textContent = 
+                        'آخر تحديث: ' + new Date().toLocaleString('ar-SA');
+
+                    resultDiv.style.display = 'block';
+                    updateStats();
+                } else {
+                    throw new Error('لا توجد بيانات للعملات المحددة');
+                }
+            } catch (error) {
+                alert('خطأ في جلب الأسعار: ' + error.message);
+            } finally {
+                convertBtn.textContent = 'تحويل';
+                convertBtn.disabled = false;
+            }
+        }
+
+        // Swap currencies
+        function swapCurrencies() {
+            const fromSelect = document.getElementById('fromCurrency');
+            const toSelect = document.getElementById('toCurrency');
+            const temp = fromSelect.value;
+            
+            fromSelect.value = toSelect.value;
+            toSelect.value = temp;
+        }
+
+        // Favorites functionality
+        function toggleFavorite() {
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+            const amount = parseFloat(document.getElementById('amount').value) || 1;
+            const favoriteBtn = document.getElementById('favoriteBtn');
+
+            const existingIndex = favorites.findIndex(fav => 
+                fav.from === fromCurrency && fav.to === toCurrency
+            );
+
+            if (existingIndex !== -1) {
+                favorites.splice(existingIndex, 1);
+                favoriteBtn.textContent = '♡';
+                favoriteBtn.classList.remove('active');
+            } else {
+                favorites.push({
+                    from: fromCurrency,
+                    to: toCurrency,
+                    amount: amount,
+                    timestamp: Date.now()
+                });
+                favoriteBtn.textContent = '♥';
+                favoriteBtn.classList.add('active');
+            }
+
+            localStorage.setItem('cryptoFavorites', JSON.stringify(favorites));
+            updateFavoriteButton();
+        }
+
+        function updateFavoriteButton() {
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            
+            const isFavorite = favorites.some(fav => 
+                fav.from === fromCurrency && fav.to === toCurrency
+            );
+
+            if (isFavorite) {
+                favoriteBtn.textContent = '♥';
+                favoriteBtn.classList.add('active');
+            } else {
+                favoriteBtn.textContent = '♡';
+                favoriteBtn.classList.remove('active');
+            }
+        }
+
+        function displayFavorites() {
+            const favoritesList = document.getElementById('favoritesList');
+            
+            if (favorites.length === 0) {
+                favoritesList.innerHTML = '<div class="empty-state">لا توجد تحويلات مفضلة حتى الآن</div>';
+                return;
+            }
+
+            let html = '';
+            favorites.forEach((favorite, index) => {
+                html += `
+                    <div class="favorite-item">
+                        <div>
+                            <strong>${favorite.amount} ${favorite.from.toUpperCase()} → ${favorite.to.toUpperCase()}</strong>
+                            <p>تم الحفظ: ${new Date(favorite.timestamp).toLocaleDateString('ar-SA')}</p>
+                        </div>
+                        <div>
+                            <button class="btn" onclick="useFavorite(${index})">استخدام</button>
+                            <button class="btn btn-danger" onclick="removeFavorite(${index})">حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            favoritesList.innerHTML = html;
+        }
+
+        function useFavorite(index) {
+            const favorite = favorites[index];
+            document.getElementById('fromCurrency').value = favorite.from;
+            document.getElementById('toCurrency').value = favorite.to;
+            document.getElementById('amount').value = favorite.amount;
+            showTab('converter');
+            updateFavoriteButton();
+        }
+
+        function removeFavorite(index) {
+            favorites.splice(index, 1);
+            localStorage.setItem('cryptoFavorites', JSON.stringify(favorites));
+            displayFavorites();
+        }
+
+        // Trending coins
+        async function loadTrendingCoins() {
+            const trendingList = document.getElementById('trendingList');
+            trendingList.innerHTML = '<div class="loading">جاري التحميل...</div>';
+
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/search/trending');
+                const data = await response.json();
+
+                let html = '';
+                data.coins.slice(0, 5).forEach((coin, index) => {
+                    const item = coin.item;
+                    html += `
+                        <div class="trending-item">
+                            <div class="trending-info">
+                                <h4>${index + 1}. ${item.name} (${item.symbol.toUpperCase()})</h4>
+                                <p>الترتيب: ${item.market_cap_rank || 'غير محدد'}</p>
+                            </div>
+                            <div>
+                                <span class="price-change price-up">رائج 🔥</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                trendingList.innerHTML = html;
+            } catch (error) {
+                trendingList.innerHTML = '<div class="error">خطأ في تحميل البيانات</div>';
+            }
+        }
+
+        // Price alerts
+        function addAlert() {
+            const crypto = document.getElementById('alertCrypto').value;
+            const targetPrice = parseFloat(document.getElementById('targetPrice').value);
+            const direction = document.querySelector('input[name="direction"]:checked').value;
+
+            if (!targetPrice || targetPrice <= 0) {
+                alert('يرجى إدخال سعر صحيح');
+                return;
+            }
+
+            const alert = {
+                id: Date.now(),
+                crypto: crypto,
+                targetPrice: targetPrice,
+                direction: direction,
+                timestamp: Date.now(),
+                triggered: false
+            };
+
+            alerts.push(alert);
+            localStorage.setItem('cryptoAlerts', JSON.stringify(alerts));
+            
+            document.getElementById('targetPrice').value = '';
+            displayAlerts();
+        }
+
+        function displayAlerts() {
+            const alertsList = document.getElementById('alertsList');
+            
+            if (alerts.length === 0) {
+                alertsList.innerHTML = '<div class="empty-state">لا توجد تنبيهات مُعدّة</div>';
+                return;
+            }
+
+            let html = '';
+            alerts.forEach((alert, index) => {
+                const directionText = alert.direction === 'above' ? 'أعلى من' : 'أقل من';
+                const statusClass = alert.triggered ? 'alert-triggered' : '';
+                
+                html += `
+                    <div class="alert-item ${statusClass}">
+                        <div>
+                            <strong>${alert.crypto.toUpperCase()}</strong>
+                            <p>${directionText} $${alert.targetPrice}</p>
+                            ${alert.triggered ? '<p style="color: #28a745; font-weight: bold;">تم التفعيل!</p>' : ''}
+                        </div>
+                        <div>
+                            <button class="btn btn-danger" onclick="removeAlert(${index})">حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            alertsList.innerHTML = html;
+        }
+
+        function removeAlert(index) {
+            alerts.splice(index, 1);
+            localStorage.setItem('cryptoAlerts', JSON.stringify(alerts));
+            displayAlerts();
+        }
+
+        // Check alerts periodically
+        async function checkAlerts() {
+            if (alerts.length === 0) return;
+
+            try {
+                const cryptoIds = [...new Set(alerts.map(alert => alert.crypto))].join(',');
+                const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoIds}&vs_currencies=usd`);
+                const prices = await response.json();
+
+                let alertTriggered = false;
+                alerts.forEach(alert => {
+                    if (alert.triggered) return;
+
+                    const currentPrice = prices[alert.crypto]?.usd;
+                    if (!currentPrice) return;
+
+                    if (
+                        (alert.direction === 'above' && currentPrice >= alert.targetPrice) ||
+                        (alert.direction === 'below' && currentPrice <= alert.targetPrice)
+                    ) {
+                        alert.triggered = true;
+                        alertTriggered = true;
+                        
+                        // Show notification
+                        if ('Notification' in window && Notification.permission === 'granted') {
+                            new Notification('تنبيه السعر!', {
+                                body: `${alert.crypto.toUpperCase()} وصل إلى $${currentPrice}`,
+                                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><text y="20" font-size="20">🔔</text></svg>'
+                            });
+                        } else {
+                            alert(`تنبيه السعر! ${alert.crypto.toUpperCase()} وصل إلى $${currentPrice}`);
+                        }
+                    }
+                });
+
+                if (alertTriggered) {
+                    localStorage.setItem('cryptoAlerts', JSON.stringify(alerts));
+                    displayAlerts();
+                }
+            } catch (error) {
+                console.error('Error checking alerts:', error);
+            }
+        }
+
+        // Usage statistics
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            let stats = JSON.parse(localStorage.getItem('cryptoStats') || '{}');
+            
+            if (!stats[today]) {
+                stats[today] = 0;
+            }
+            stats[today]++;
+            
+            localStorage.setItem('cryptoStats', JSON.stringify(stats));
+            displayStats();
+        }
+
+        function displayStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const stats = JSON.parse(localStorage.getItem('cryptoStats') || '{}');
+            
+            const todayCount = stats[today] || 0;
+            const totalCount = Object.values(stats).reduce((sum, count) => sum + count, 0);
+            
+            document.getElementById('todayCount').textContent = todayCount;
+            document.getElementById('totalCount').textContent = totalCount;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFavoriteButton();
+            displayStats();
+            
+            // Request notification permission
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+            
+            // Check alerts every minute
+            setInterval(checkAlerts, 60000);
+            
+            // Update favorite button when currencies change
+            document.getElementById('fromCurrency').addEventListener('change', updateFavoriteButton);
+            document.getElementById('toCurrency').addEventListener('change', updateFavoriteButton);
+        });
+    </script>
+</body>
+</html>
